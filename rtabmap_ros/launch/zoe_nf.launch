@@ -1,0 +1,33 @@
+<!-- -->
+<launch>
+  <remap from="/scan_cloud" to="/points2"/>
+<remap from="/rgb/image" to="/spot/camera/frontleft/image"/>
+<remap from="/rgb/camera_info" to="/spot/camera/frontleft/camera_info"/>
+<remap from="/odom" to="/spot/odometry"/>
+
+<node pkg="rtabmap_ros" type="rtabmap" name="rtabmap_cloud" args="--delete_db_on_start"> 
+  <param name="subscribe_depth" value="false"/>
+<param name="subscribe_scan" value="false"/>
+<param name="subscribe_scan_cloud" value="true"/>
+<param name="subscribe_stereo" value="false"/>
+<param name="subscribe_rgbd" value="false"/>
+<param name="subscribe_depth" value="false"/>
+<param name="frame_id" type="string" value="velodyne_base_link"/>
+  <param name="subscribe_depth" value="false"/>
+<param name="Grid/FlatObstacleDetected" value="false"/>
+<param name="Grid/NormalsSegmentation" value="false"/>
+<param name="Grid/MaxGroundHeight" value="-0.3"/>
+<param name="Grid/RangeMax" value="0.0"/>
+<!--<param name="Grid/MaxGroundAngle" value="90"/>-->
+<param name="GridGlobal/Eroded" value="false"/>
+<param name="Optimizer/Strategy" value="2"/>
+<param name="Optimizer/PriorsIgnored" value="false"/>
+<param name="Optimizer/Robust" value="true"/>
+<param name="Bayes/FullPredictionUpdate" value="false"/>
+<param name="Grid/MaxObstacleHeight" value="1.2"/>
+<!--<param name="Grid/FootprintWidth" value="0.1"/>
+<param name="Grid/FootprintLenght" value="0.1"/>
+<param name="Grid/FootprintHeight" value="0.1"/>-->
+</node>
+
+</launch>
