@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 #--------Include modules---------------
 from copy import copy
@@ -39,7 +39,7 @@ def node():
 	rospy.init_node('assigner', anonymous=False)
 	
 	# fetching all parameters
-	map_topic= rospy.get_param('~map_topic','/map')
+	map_topic= rospy.get_param('~map_topic','/grid_map')
 	info_radius= rospy.get_param('~info_radius',1.0)					#this can be smaller than the laser scanner range, >> smaller >>less computation time>> too small is not good, info gain won't be accurate
 	info_multiplier=rospy.get_param('~info_multiplier',3.0)		
 	hysteresis_radius=rospy.get_param('~hysteresis_radius',3.0)			#at least as much as the laser scanner range
@@ -54,7 +54,8 @@ def node():
 	rate = rospy.Rate(rateHz)
 #-------------------------------------------
 	rospy.Subscriber(map_topic, OccupancyGrid, mapCallBack)
-	rospy.Subscriber(frontiers_topic, PointArray, callBack)
+	rospy.Subscriber('/filtered_points', PointArray, callBack)
+	
 #---------------------------------------------------------------------------------------------------------------
 		
 # wait if no frontier is received yet 
@@ -66,12 +67,12 @@ def node():
 		pass
 
 	robots=[]
-	if len(namespace)>0:
-		for i in range(0,n_robots):
-			robots.append(robot(namespace+str(i+namespace_init_count)))
-	elif len(namespace)==0:
-			robots.append(robot(namespace))
-	for i in range(0,n_robots):
+	if 1>0:
+		for i in range(0,1):
+			robots.append(robot(''))
+	'''elif len(namespace)==0:
+			robots.append(robot(namespace))'''
+	for i in range(0,1):
 		robots[i].sendGoal(robots[i].getPosition())
 #-------------------------------------------------------------------------
 #---------------------     Main   Loop     -------------------------------
