@@ -105,13 +105,14 @@ def main(argv):
     # the velodyne and start getting data from it.
     rospy.init_node('pc2_publisher')
     pub = rospy.Publisher('points2', PointCloud2, queue_size=100)
-    parser = argparse.ArgumentParser()
+    '''parser = argparse.ArgumentParser()
     bosdyn.client.util.add_base_arguments(parser)
-    options = parser.parse_args(argv)
+    options = parser.parse_args(argv)'''
 
     sdk = bosdyn.client.create_standard_sdk('VelodyneClient')
-    robot = sdk.create_robot(options.hostname)
-    bosdyn.client.util.authenticate(robot)
+    robot = sdk.create_robot('192.168.80.3')
+    robot.authenticate('user', 'wruzvkg4rce4')
+    #bosdyn.client.util.authenticate(robot)
     robot.sync_with_directory()
 
     _point_cloud_client = robot.ensure_client('velodyne-point-cloud')
