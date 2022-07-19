@@ -25,6 +25,7 @@ geometry_msgs::PointStamped clickedpoint;
 geometry_msgs::PointStamped exploration_goal;
 visualization_msgs::Marker points,line;
 float xdim,ydim,resolution,Xstartx,Xstarty,init_map_x,init_map_y;
+int map=0;
 
 rdm r; // for genrating random numbers
 
@@ -34,6 +35,7 @@ rdm r; // for genrating random numbers
 void mapCallBack(const nav_msgs::OccupancyGrid::ConstPtr& msg)
 {
 mapData=*msg;
+map=1;
 }
 
 
@@ -77,9 +79,9 @@ int main(int argc, char **argv)
   ros::param::param<float>(ns+"/eta", eta, 0.5);
   ros::param::param<std::string>(ns+"/map_topic", map_topic, "/robot_1/map"); 
 //---------------------------------------------------------------
-ros::Subscriber sub= nh.subscribe(map_topic, 100 ,mapCallBack);	
+ros::Subscriber sub= nh.subscribe("/grid_map", 100 ,mapCallBack);	
 ros::Subscriber rviz_sub= nh.subscribe("/clicked_point", 100 ,rvizCallBack);	
-
+ROS_INFO("click points");
 ros::Publisher targetspub = nh.advertise<geometry_msgs::PointStamped>("/detected_points", 10);
 ros::Publisher pub = nh.advertise<visualization_msgs::Marker>(ns+"_shapes", 10);
 
@@ -87,8 +89,9 @@ ros::Rate rate(100);
  
  
 // wait until map is received, when a map is received, mapData.header.seq will not be < 1  
-while (mapData.header.seq<1 or mapData.data.size()<1)  {  ros::spinOnce();  ros::Duration(0.1).sleep();}
-
+//while (mapData.header.seq<1 or mapData.data.size()<1)  {  ros::spinOnce();  ros::Duration(0.1).sleep();}
+while (map==0)  {  ros::spinOnce();  ros::Duration(0.1).sleep();}
+ROS_INFO("after map received");
 
 
 //visualizations  points and lines..
