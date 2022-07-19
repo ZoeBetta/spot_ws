@@ -47,7 +47,7 @@ p.y=msg->point.y;
 p.z=msg->point.z;
 
 points.points.push_back(p);
-
+printf("point received");
 }
 
 

@@ -26,12 +26,14 @@ globalmaps=[]
 def callBack(data):
 	global frontiers
 	frontiers=[]
+	#rospy.loginfo("frontiers received")
 	for point in data.points:
 		frontiers.append(array([point.x,point.y]))
 
 def mapCallBack(data):
     global mapData
     mapData=data
+    #rospy.loginfo("map received")
 # Node----------------------------------------------
 
 def node():
@@ -60,24 +62,31 @@ def node():
 		
 # wait if no frontier is received yet 
 	while len(frontiers)<1:
+		#rospy.loginfo("frontiers not received")
 		pass
 	centroids=copy(frontiers)	
 #wait if map is not received yet
 	while (len(mapData.data)<1):
+		rospy.loginfo("map not received")
 		pass
 
 	robots=[]
-	if 1>0:
-		for i in range(0,1):
-			robots.append(robot(''))
-	'''elif len(namespace)==0:
-			robots.append(robot(namespace))'''
-	for i in range(0,1):
+	print("before assigning namespace")
+	if len(namespace)>0:
+		for i in range(0,n_robots):
+			print(robot(namespace))
+			robots.append(robot(namespace))
+	elif len(namespace)==0:
+			print(robot(namespace))
+			robots.append(robot(namespace))
+	print("before for loop")
+	for i in range(0,n_robots):
 		robots[i].sendGoal(robots[i].getPosition())
 #-------------------------------------------------------------------------
 #---------------------     Main   Loop     -------------------------------
 #-------------------------------------------------------------------------
 	while not rospy.is_shutdown():
+		rospy.loginfo("inside main")
 		centroids=copy(frontiers)		
 #-------------------------------------------------------------------------			
 #Get information gain for each frontier point
@@ -85,7 +94,7 @@ def node():
 		for ip in range(0,len(centroids)):
 			infoGain.append(informationGain(mapData,[centroids[ip][0],centroids[ip][1]],info_radius))
 #-------------------------------------------------------------------------			
-#get number of available/busy robots
+#get number of available/busy robots - uses a function of the movebase node
 		na=[] #available robots
 		nb=[] #busy robots
 		for i in range(0,n_robots):
