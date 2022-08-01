@@ -32,19 +32,19 @@ def main(argv):
     point=PointStamped()
     time.sleep(5)
     point.header.frame_id='map'
-    point.point.x=-5
+    point.point.x=-30
     point.point.y=30
     pub.publish(point)
     time.sleep(5)
-    point.point.x=-5
+    point.point.x=-30
     point.point.y=-30
     pub.publish(point)
     time.sleep(5)
-    point.point.x=5
+    point.point.x=30
     point.point.y=-30
     pub.publish(point)
     time.sleep(5)
-    point.point.x=5
+    point.point.x=30
     point.point.y=30
     pub.publish(point)
     time.sleep(5)
