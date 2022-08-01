@@ -108,6 +108,26 @@ def informationGain(mapData,point,r):
 	#rospy.loginfo(mapData.info.resolution)
 	#rospy.loginfo(infoGain)
 	return infoGain*(mapData.info.resolution*2)
+
+#________________________________________________________________________________		
+
+def obstacles(mapData,point,r):
+	infoGain=0;
+	index=index_of_point(mapData,point)
+	r_region=int(r/mapData.info.resolution)
+	init_index=index-r_region*(mapData.info.width+1)	
+	for n in range(0,2*r_region+1):
+		start=n*mapData.info.width+init_index
+		end=start+2*r_region
+		limit=((start/mapData.info.width)+2)*mapData.info.width
+		for i in range(start,end+1):
+			if (i>=0 and i<limit and i<len(mapData.data)):
+				if(mapData.data[i]>70 and norm(array(point)-point_of_index(mapData,i))<=r):
+					infoGain+=1
+			#rospy.loginfo(norm(array(point)-point_of_index(mapData,i)))
+	#rospy.loginfo(mapData.info.resolution)
+	#rospy.loginfo(infoGain)
+	return infoGain*(mapData.info.resolution*2)
 #_______________________________________________________________________________
 
 def discount(mapData,assigned_pt,centroids,infoGain,r):
