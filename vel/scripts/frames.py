@@ -18,6 +18,8 @@ import rospy
 import bosdyn
 import bosdyn.client
 import bosdyn.client.util
+import roslib
+import tf
 
 from bosdyn.client.frame_helpers import get_odom_tform_body, add_edge_to_tree
 from bosdyn.client.robot_state import RobotStateClient
@@ -62,22 +64,27 @@ def main(argv):
     update_thread.daemon = True
     update_thread.start()
 
-    r= rospy.Rate(1)
+    r= rospy.Rate(20)
     frame_tree_edges={}
     while any(task.proto is None for task in _task_list):
         time.sleep(0.1)
         print('wait')
     odom_tform_start_prova=get_odom_tform_body(_robot_state_task.proto.kinematic_state.transforms_snapshot).to_proto()
     odom_tform_start=SE3Pose(odom_tform_start_prova.position.x,odom_tform_start_prova.position.y,odom_tform_start_prova.position.z,odom_tform_start_prova.rotation)
-    print(odom_tform_start)
+    print(odom_tform_start_prova)
+    br= tf.TransformBroadcaster()
+    br.sendTransform( (odom_tform_start_prova.position.x,odom_tform_start_prova.position.y,odom_tform_start_prova.position.z), (odom_tform_start_prova.rotation.x,odom_tform_start_prova.rotation.y, odom_tform_start_prova.rotation.z, odom_tform_start_prova.rotation.w ), rospy.Time.now(), "start", "odom")
     while not rospy.is_shutdown():
         odom_tform_body_prova = get_odom_tform_body(_robot_state_task.proto.kinematic_state.transforms_snapshot).to_proto()
         odom_tform_body=SE3Pose(odom_tform_body_prova.position.x,odom_tform_body_prova.position.y,odom_tform_body_prova.position.z, odom_tform_body_prova.rotation)
-        print("in frame odometry")
-        print(odom_tform_body)
+        #print("in frame odometry")
+        #print(odom_tform_body)
         start_tform_body=odom_tform_start.inverse()*odom_tform_body
-        print("in frame start")
-        print(start_tform_body)
+
+        br.sendTransform( (odom_tform_start_prova.position.x,odom_tform_start_prova.position.y,odom_tform_start_prova.position.z), (odom_tform_start_prova.rotation.x,odom_tform_start_prova.rotation.y, odom_tform_start_prova.rotation.z, odom_tform_start_prova.rotation.w ), rospy.Time.now(), "start", "odom")
+        #br.sendTransform( (start_tform_body.position.x,start_tform_body.position.y,start_tform_body.position.z), (start_tform_body.rotation.x,start_tform_body.rotation.y, start_tform_body.rotation.z, start_tform_body.rotation.w ), rospy.Time.now(), "body", "start")
+        #print("in frame start")
+        #print(start_tform_body)
         #frame_tree_edges=add_edge_to_tree(frame_tree_edges, start_tform_body, 'start', 'body')
         r.sleep()
     
