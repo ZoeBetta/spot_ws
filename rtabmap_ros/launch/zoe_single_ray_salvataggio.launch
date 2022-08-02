@@ -3,7 +3,7 @@
   <remap from="/scan_cloud" to="/cloud_filtered"/>
 <remap from="/rgb/image" to="/spot/camera/frontleft/image"/>
 <remap from="/rgb/camera_info" to="/spot/camera/frontleft/camera_info"/>
-<!--<remap from="/odom" to="/spot/odometry"/>-->
+<remap from="/odom" to="/spot/odometry"/>
 
 <node pkg="rtabmap_ros" type="rtabmap" name="rtabmap_cloud" args="--delete_db_on_start"> 
   <param name="subscribe_depth" value="false"/>
@@ -12,8 +12,7 @@
 <param name="subscribe_stereo" value="false"/>
 <param name="subscribe_rgbd" value="false"/>
 <param name="subscribe_depth" value="false"/>
-<param name="frame_id" type="string" value="body"/>
-<param name="odom_frame_id" type="string" value="start"/>
+<param name="frame_id" type="string" value="velodyne_base_link"/>
   <param name="subscribe_depth" value="false"/>
 
 <param name="Grid/FlatObstacleDetected" value="false"/>
