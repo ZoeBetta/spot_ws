@@ -9,4 +9,4 @@ When 3 messages appear
 rosrun vel clicked_point.py  
 
 ## TODO
-modify the frontier filter in order to delete stupid frontiers, like the ones with a lot of obstacles around, i prefer the robot not stuck that doesn't explore everything
+test if the pointcloud conversion works to start the map from a different point
