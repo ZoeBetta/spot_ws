@@ -82,7 +82,8 @@ def main(argv):
         start_tform_body=odom_tform_start.inverse()*odom_tform_body
 
         br.sendTransform( (odom_tform_start_prova.position.x,odom_tform_start_prova.position.y,odom_tform_start_prova.position.z), (odom_tform_start_prova.rotation.x,odom_tform_start_prova.rotation.y, odom_tform_start_prova.rotation.z, odom_tform_start_prova.rotation.w ), rospy.Time.now(), "start", "odom")
-        #br.sendTransform( (start_tform_body.position.x,start_tform_body.position.y,start_tform_body.position.z), (start_tform_body.rotation.x,start_tform_body.rotation.y, start_tform_body.rotation.z, start_tform_body.rotation.w ), rospy.Time.now(), "body", "start")
+        
+        br.sendTransform( (start_tform_body.position.x,start_tform_body.position.y,start_tform_body.position.z), (start_tform_body.rotation.x,start_tform_body.rotation.y, start_tform_body.rotation.z, start_tform_body.rotation.w ), rospy.Time.now(), "body", "start")
         #print("in frame start")
         #print(start_tform_body)
         #frame_tree_edges=add_edge_to_tree(frame_tree_edges, start_tform_body, 'start', 'body')
