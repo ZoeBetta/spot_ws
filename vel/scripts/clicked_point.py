@@ -30,28 +30,28 @@ def main(argv):
     rospy.init_node('click')
     pub = rospy.Publisher('/clicked_point', PointStamped, queue_size=10)
     point=PointStamped()
-    time.sleep(5)
+    time.sleep(2)
     point.header.frame_id='map'
     point.point.x=-30
     point.point.y=30
     pub.publish(point)
-    time.sleep(5)
+    time.sleep(2)
     point.point.x=-30
     point.point.y=-30
     pub.publish(point)
-    time.sleep(5)
+    time.sleep(2)
     point.point.x=30
     point.point.y=-30
     pub.publish(point)
-    time.sleep(5)
+    time.sleep(2)
     point.point.x=30
     point.point.y=30
     pub.publish(point)
-    time.sleep(5)
-    point.point.x=-0
+    time.sleep(2)
+    point.point.x=0
     point.point.y=0
     pub.publish(point)
-    time.sleep(5)
+    time.sleep(2)
     
 
 if __name__ == '__main__':
