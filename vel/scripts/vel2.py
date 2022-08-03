@@ -132,8 +132,6 @@ def main(argv):
         time.sleep(0.1)
     fig = plt.figure()
 
-    body_tform_butt = SE3Pose(-0.5, 0, 0, Quat())
-    body_tform_head = SE3Pose(0.5, 0, 0, Quat())
 
     # Plot the point cloud as an animation.
     ax = fig.add_subplot(111, projection='3d')
@@ -156,7 +154,7 @@ def main(argv):
               PointField('z', 8, PointField.FLOAT32, 1),
               PointField('intensity', 12, PointField.FLOAT32, 1),]
             header = Header()
-            header.frame_id = "odom"
+            header.frame_id = 'odom'
             header.stamp = rospy.Time.now()
             points = np.array([x,y,z,i]).reshape(4,-1).T
             pc2 = point_cloud2.create_cloud(header, fields, points)

@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<launch>
+
+<node pkg="vel" type="frames.py" respawn="false" name="frames">
+  </node>
+
+      <node pkg="vel" type="vel2.py" respawn="false" name="velodyne">
+  </node>
+
+      <node pkg="vel" type="pointcloudconv" respawn="false" name="pointconv">
+  </node>
+
+
+</launch>

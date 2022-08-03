@@ -5,8 +5,7 @@
 
 <include file="$(find spot_viz)/launch/view_robot.launch"></include>
 
-      <node pkg="vel" type="vel2.py" respawn="false" name="velodyne">
-  </node>
+
 
 
 </launch>
