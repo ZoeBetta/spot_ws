@@ -20,9 +20,9 @@ global_costmap:
    # The resolution of the map in meters/cell
    resolution: 0.05
    # The x origin of the map in the global frame in meters
-   origin_x: 0.0 
+   origin_x: -20.0 
    # The y origin of the map in the global frame in meters
-   origin_y: 0.0
+   origin_y: -20.0
    inflation_layer:
         inflation_radius: 1.5
         cost_scaling_factor: 30

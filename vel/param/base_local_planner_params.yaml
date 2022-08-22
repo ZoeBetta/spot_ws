@@ -25,6 +25,7 @@ TrajectoryPlannerROS:
   holonomic_robot: true
   #The strafing velocities that a holonomic robot will consider in meters/sec
   y_vels: [-0.5, -.01, 0.1, 0.5]
+  vy_samples: 8
 
 # GOAL TOLERANCE PARAMETERS
   # The tolerance in radians for the controller in yaw/rotation when achieving its goal
@@ -33,7 +34,7 @@ TrajectoryPlannerROS:
   xy_goal_tolerance: 0.2
   # If goal tolerance is latched, if the robot ever reaches the goal xy location it will simply rotate in place, even if it ends up outside the goal tolerance while it is doing so
   # capire se mi serve settarlo
-  latch_xy_goal_tolerance: 
+  
   
 # FORWARD SIMULATION PARAMETERS
   # The amount of time to forward-simulate trajectories in seconds
@@ -60,7 +61,7 @@ TrajectoryPlannerROS:
   occdist_scale: 0.7
   # How far to look ahead in meters when scoring different in-place-rotation trajectories
   # DA CAPIRE
-  heading_lookahead: 0.325
+  heading_lookahead: 5.0
   # Whether to score based on the robot's heading to the path or its distance from the path
   # DA CAPIRE
   heading_scoring: true
