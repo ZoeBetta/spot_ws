@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<launch>
+
+<node pkg="zoe" type="frames.py" respawn="false" name="frames">
+  </node>
+
+      <node pkg="zoe" type="vel2.py" respawn="false" name="velodyne">
+  </node>
+
+      <node pkg="zoe" type="pointcloudconv" respawn="false" name="pointconv">
+  </node>
+
+
+</launch>
