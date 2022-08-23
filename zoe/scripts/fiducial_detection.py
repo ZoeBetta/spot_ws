@@ -89,12 +89,6 @@ def main(argv):
    
     # Wait for the first responses.
     while not rospy.is_shutdown():
-        try:
-            (trans,rot) = listener.lookupTransform('vision', 'start', rospy.Time(0))
-            #print('start')
-            #print(trans)
-        except (tf.LookupException, tf.ConnectivityException, tf.ExtrapolationException):
-            continue 
         request_fiducials = [world_object_pb2.WORLD_OBJECT_APRILTAG]
         fiducial_objects = _world_object_client.list_world_objects(object_type=request_fiducials).world_objects
         for i in fiducial_objects:
@@ -104,14 +98,13 @@ def main(argv):
             # it sends the message with the name of the fiducial and its position
             msg.id=i.apriltag_properties.frame_name_fiducial
             #retrieve position in frame start
-            vision_tform_fiducial = get_a_tform_b(i.transforms_snapshot, VISION_FRAME_NAME, i.apriltag_properties.frame_name_fiducial).to_proto()
+            vision_tform_fiducial = get_a_tform_b(i.transforms_snapshot, BODY_FRAME_NAME, i.apriltag_properties.frame_name_fiducial).to_proto()
             #print('transform')
-            print(vision_tform_fiducial.position)
-            print(trans)
+            #print(vision_tform_fiducial.position)
             # do transformation matrix between vision and transform
-            msg.x=vision_tform_fiducial.position.x-trans[0]
-            msg.y=vision_tform_fiducial.position.y-trans[1]
-            msg.z=vision_tform_fiducial.position.z-trans[2]
+            msg.x=vision_tform_fiducial.position.x
+            msg.y=vision_tform_fiducial.position.y
+            msg.z=vision_tform_fiducial.position.z
             pub.publish(msg)
 
 
