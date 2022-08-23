@@ -2,7 +2,6 @@
 ## how to run
 In 5 different terminals  
 roslaunch vel spot.launch  
-rosrun vel frames.py  
 roslaunch vel vel.launch  
 roslaunch vel map.launch  
 roslaunch vel move_base.launch  
@@ -14,9 +13,6 @@ rosrun vel clicked_point.py
 ## what are the nodes called:
 roslaunch vel spot.launch    
 it launches rviz and all the bosdyn services
-
-rosrun vel frames.py  
-initializes the node that creates the start frame in the position the robot is when everything starts
 
 roslaunch vel vel.launch  
 it launches the frames.py node that creates the frame start in the position the robot is in. the node vel2.py that reads the data from the sensors and return the pointcloud2. and the node pointcloudconv that converts the frame for the pointcloud from the frame odom (where the robot has been turned on) to the frame start.
