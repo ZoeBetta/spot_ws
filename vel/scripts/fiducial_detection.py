@@ -83,16 +83,20 @@ def main(argv):
     _world_object_client = robot.ensure_client(WorldObjectClient.default_service_name)
     print('Connected.')
 
-    update_thread = threading.Thread(target=_update_thread, args=[_async_tasks])
-    update_thread.daemon = True
-    update_thread.start()
+    #update_thread = threading.Thread(target=_update_thread, args=[_async_tasks])
+    #update_thread.daemon = True
+    #update_thread.start()
 
     # Wait for the first responses.
     while not rospy.is_shutdown():
 
         request_fiducials = [world_object_pb2.WORLD_OBJECT_APRILTAG]
         fiducial_objects = _world_object_client.list_world_objects(object_type=request_fiducials).world_objects
-        print(fiducial_objects)
+        if len(fiducial_objects) > 0:
+            fiducial=fiducial_objects[0]
+            #print(fiducial_objects)
+            #print(fiducial_objects.name)
+            print(fiducial.apriltag_properties.frame_name_fiducial)
 
 
 if __name__ == '__main__':

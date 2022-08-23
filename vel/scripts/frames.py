@@ -49,7 +49,7 @@ class AsyncRobotState(AsyncPeriodicQuery):
         return self._client.get_robot_state_async()
 
 def main(argv):
-    rospy.init_node('click')
+    rospy.init_node('frames')
     sdk = bosdyn.client.create_standard_sdk('VelodyneClient')
     robot = sdk.create_robot('192.168.80.3')
     robot.authenticate('user', 'wruzvkg4rce4')
