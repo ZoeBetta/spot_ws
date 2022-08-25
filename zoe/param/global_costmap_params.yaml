@@ -24,5 +24,5 @@ global_costmap:
    # The y origin of the map in the global frame in meters
    origin_y: -20.0
    inflation_layer:
-        inflation_radius: 1.5
-        cost_scaling_factor: 30
+        inflation_radius: 1.0
+        cost_scaling_factor: 20
