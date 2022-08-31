@@ -2,20 +2,20 @@ TrajectoryPlannerROS:
 
 # ROBOT CONFIGURATION PARAMETERS
   #The x acceleration limit of the robot in meters/sec^2
-  acc_lim_x: 1.2
+  acc_lim_x: 10
   #The y acceleration limit of the robot in meters/sec^2
-  acc_lim_y: 1.2
+  acc_lim_y: 10
   # The rotational acceleration limit of the robot in radians/sec^2
-  acc_lim_th: 1.2
+  acc_lim_theta: 1.2
   max_vel_trans: 0.7
-  min_vel_trans: 0.1
+  min_vel_trans: 0.3
   #The maximum forward velocity allowed for the base in meters/sec
   # the maximum velocity for spot is 1.6 meters?second, I impose hal of it for safety
   max_vel_x: 0.8
   # The minimum forward velocity allowed for the base in meters/sec. It is useful to specify this to guarantee that velocity commands sent to a mobile base are high enough to allow the base to overcome friction.
-  min_vel_x: 0.0
+  min_vel_x: -0.5
   max_vel_y: 0.5
-  min_vel_y: 0.0
+  min_vel_y: -0.2
   max_rot_vel: 1.0
   min_rot_vel: 0.4
 
@@ -32,7 +32,7 @@ TrajectoryPlannerROS:
   # The amount of time to forward-simulate trajectories in seconds
   sim_time: 1.0
   # The step size, in meters, to take between points on a given trajectory
-  sim_granularity: 0.05
+  sim_granularity: 0.1
   # The number of samples to use when exploring the x velocity space
   vx_samples: 8
   vy_samples: 8
@@ -42,9 +42,9 @@ TrajectoryPlannerROS:
   controller_frequency: 20.0
 
 # TRAJECOTRY SCORING PARAMETERS
- path_distance_bias: 32.0
- goal_distance_bias: 24.0
- occdist_scale: 36.0
+  path_distance_bias: 3.0
+  goal_distance_bias: 2.0
+  occdist_scale: 4.0
 
 
 # OSCILLATION PREVENTION PARAMETERS
@@ -55,3 +55,5 @@ TrajectoryPlannerROS:
 # GLOBAL PLAN_PARAMETERS
   # Defines whether or not to eat up the plan as the robot moves along the path. If set to true, points will fall off the end of the plan once the robot moves 1 meter past them.
   prune_plan: true
+
+  global_frame_id: map

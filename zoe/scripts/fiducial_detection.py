@@ -97,8 +97,8 @@ def main(argv):
             (trans,rot) = listener.lookupTransform('/start', BODY_FRAME_NAME, rospy.Time(0))
         except (tf.LookupException, tf.ConnectivityException, tf.ExtrapolationException):
             continue
-        print(trans)
-        print(rot)
+        #print(trans)
+        #print(rot)
         for i in fiducial_objects:
             #print(fiducial_objects)
             #print(fiducial_objects.name)
@@ -108,20 +108,21 @@ def main(argv):
             #retrieve position in frame start
             vision_tform_fiducial = get_a_tform_b(i.transforms_snapshot, BODY_FRAME_NAME, i.apriltag_properties.frame_name_fiducial).to_proto()
             euler=transformations.euler_from_quaternion(rot)
-            trMat=np.matrix([ [np.cos(euler[0])*np.cos(euler[1])*np.cos(euler[2])-np.sin(euler[0])*np.sin(euler[2]), -np.cos(euler[0])*np.cos(euler[1])*np.sin(euler[2])-np.sin(euler[0])*np.cos(euler[2]), np.cos(euler[0])*np.sin(euler[1]), trans[0]],
+            trMat=np.array([ [np.cos(euler[0])*np.cos(euler[1])*np.cos(euler[2])-np.sin(euler[0])*np.sin(euler[2]), -np.cos(euler[0])*np.cos(euler[1])*np.sin(euler[2])-np.sin(euler[0])*np.cos(euler[2]), np.cos(euler[0])*np.sin(euler[1]), trans[0]],
             [np.sin(euler[0])*np.cos(euler[1])*np.cos(euler[2])-np.cos(euler[0])*np.sin(euler[2]), -np.sin(euler[0])*np.cos(euler[1])*np.sin(euler[2])+np.cos(euler[0])*np.cos(euler[2]), np.sin(euler[0])*np.sin(euler[1]), trans[1]],
             [-np.sin(euler[1])*np.cos(euler[2]), np.sin(euler[1])*np.sin(euler[2]), np.cos(euler[1]), trans[2]],
             [0,0,0,1]
             ]
             )
-            start_tform_fiducial=np.matmul(trMat,vision_tform_fiducial)
-            print(start_tform_fiducial)
+            body_tform_fid=[vision_tform_fiducial.position.x, vision_tform_fiducial.position.y, vision_tform_fiducial.position.z, 1]
+            start_tform_fiducial=np.matmul(trMat,body_tform_fid)
+            #print(start_tform_fiducial)
             #print('transform')
             #print(vision_tform_fiducial.position)
             # do transformation matrix between vision and transform
-            msg.x=vision_tform_fiducial.position.x
-            msg.y=vision_tform_fiducial.position.y
-            msg.z=vision_tform_fiducial.position.z
+            msg.x=start_tform_fiducial[0]
+            msg.y=start_tform_fiducial[1]
+            msg.z=start_tform_fiducial[2]
             pub.publish(msg)
 
 

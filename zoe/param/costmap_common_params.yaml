@@ -1,18 +1,8 @@
-# the maximum range sensor reading that will result in an obstacle being put into the costmap
-# if an obstacle is more than 4.0 meters away I don't update the costmap
-obstacle_range: 4.0
-# range to which we will raytrace freespace given a sensor reading
-raytrace_range: 4.5
-# dimensions of the robot
-footprint: [[0.25,-0.55], [0.25, 0.55], [-0.25,0.55], [-0.25,-0.55]]
-# I am far from obstacles if I stay 0.7 metersa away, any closer and I have a cost
+obstacle_range: 2.5
+raytrace_range: 3.0
+footprint:  [[0.55,-0.25], [0.55, 0.25], [-0.55,0.25], [-0.55,-0.25]]
 inflation_radius: 0.55
 
-# list of sensors
 observation_sources: point_cloud_sensor
-# sensor_frame -> where the sensor is
-# data_type -> what is the type of message received
-# topic -> where is the message received
-# marking -> sensor will be used to add obstacle information to the costmap
-# clearing -> sensor will be used to clear obstacle information from the costmap
-point_cloud_sensor: {sensor_frame: velodyne, data_type: PointCloud2, topic: /points2, marking: true, clearing: true}
+
+point_cloud_sensor: {sensor_frame: velodyne, data_type: PointCloud2, topic: /points2, marking: false, clearing: false}
