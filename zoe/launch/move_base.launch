@@ -6,11 +6,11 @@
       <node pkg="move_base" type="move_base" respawn="false" name="move_base">
 	<!--<param name="base_global_planner" value="carrot_planner/CarrotPlanner" />-->
 	<param name="base_global_planner" value="global_planner/GlobalPlanner" />
-    <rosparam file="$(find zoe)/param/costmap_common_params.yaml" command="load" ns="global_costmap"/>
-    <rosparam file="$(find zoe)/param/costmap_common_params.yaml" command="load" ns="local_costmap"/>
-    <rosparam file="$(find zoe)/param/local_costmap_params.yaml" command="load"/>
-    <rosparam file="$(find zoe)/param/global_costmap_params.yaml" command="load"/>
-    <rosparam file="$(find zoe)/param/base_local_planner_params.yaml" command="load"/>
+    <rosparam file="$(find zoe)/param/old/costmap_common_params.yaml" command="load" ns="global_costmap"/>
+    <rosparam file="$(find zoe)/param/old/costmap_common_params.yaml" command="load" ns="local_costmap"/>
+    <rosparam file="$(find zoe)/param/old/local_costmap_params.yaml" command="load"/>
+    <rosparam file="$(find zoe)/param/old/global_costmap_params.yaml" command="load"/>
+    <rosparam file="$(find zoe)/param/old/base_local_planner_params.yaml" command="load"/>
 
   </node>
 

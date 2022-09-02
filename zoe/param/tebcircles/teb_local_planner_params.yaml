@@ -31,8 +31,11 @@ TebLocalPlannerROS:
  min_turning_radius: 0.0 # omni-drive robot (can turn on place!)
 
  footprint_model:
-   type: "polygon"
-   vertices: [[0.25,-0.55], [0.25, 0.55], [-0.25,0.55], [-0.25,-0.55]]
+   type: "two_circles"
+   front_offset: 0.3
+   front_radius: 0.3
+   rear_offset: 0.3
+   rear_radius: 0.3
 
  # GoalTolerance
     
