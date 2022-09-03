@@ -85,7 +85,7 @@ def index_of_point(mapData,Xp):
 	
 def point_of_index(mapData,i):
 	y=mapData.info.origin.position.y+(i//mapData.info.width)*mapData.info.resolution
-	x=mapData.info.origin.position.x+(i%mapData.info.width-1)*mapData.info.resolution#(i-(i/mapData.info.width)*(mapData.info.width))*mapData.info.resolution
+	x=mapData.info.origin.position.x+(i%mapData.info.width)*mapData.info.resolution#(i-(i/mapData.info.width)*(mapData.info.width))*mapData.info.resolution
 	#rospy.loginfo(mapData.info.origin.position.y)
 	#rospy.loginfo(mapData.info.width)
 	return array([x,y])
