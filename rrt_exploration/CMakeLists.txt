@@ -21,6 +21,11 @@ add_message_files(
   PointArray.msg
 )
 
+add_service_files(
+  FILES
+  Floor.srv
+)
+
 generate_messages(
   DEPENDENCIES
   std_msgs
@@ -32,6 +37,7 @@ catkin_package(
 
 CATKIN_DEPENDS message_runtime
 )
+
 
 
 

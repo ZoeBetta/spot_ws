@@ -8,6 +8,10 @@ from geometry_msgs.msg import PoseStamped
 from numpy import floor
 from numpy.linalg import norm
 from numpy import inf
+from shapely.geometry import Point as pt
+from shapely.geometry.polygon import Polygon
+from shapely.geometry import  LineString
+from zoe.msg import fiducial
 #________________________________________________________________________________
 class robot:
 	goal = MoveBaseGoal()
@@ -89,7 +93,9 @@ def point_of_index(mapData,i):
 	#rospy.loginfo(mapData.info.origin.position.y)
 	#rospy.loginfo(mapData.info.width)
 	return array([x,y])
-#________________________________________________________________________________		
+#________________________________________________________________________________
+# it calculates the number of unknown cells near the frontiers and returns the approximate values in square meters that will be discovered
+# 		
 
 def informationGain(mapData,point,r):
 	infoGain=0;
@@ -113,7 +119,16 @@ def informationGain(mapData,point,r):
 	#rospy.loginfo(mapData.info.resolution)
 	#rospy.loginfo(infoGain)
 	# return the information gain in how many meters do you expect to discover
-	return infoGain*(mapData.info.resolution*2)
+	return infoGain*(mapData.info.resolution**2)
+
+#________________________________________________________________________________	
+
+def FloorGain(mapData):
+	explored=0
+	for i in range(0,len(mapData.data)):
+		if mapData[i]!=-1:
+			explored+=1
+	return explored*(mapData.info.resolution**2)
 
 #________________________________________________________________________________		
 
@@ -133,7 +148,32 @@ def obstacles(mapData,point,r):
 			#rospy.loginfo(norm(array(point)-point_of_index(mapData,i)))
 	#rospy.loginfo(mapData.info.resolution)
 	#rospy.loginfo(infoGain)
-	return infoGain*(mapData.info.resolution*2)
+	return infoGain*(mapData.info.resolution**2)
+#_______________________________________________________________________________
+
+def IsStairs(fiducial,point, floor):
+	for i in fiducial:
+		if i.floor==floor:
+			for j in fiducial:
+				if j.floor== floor:
+					if ((i.id+1)==(j.id)):
+						fiducial1=j
+						fiducial2=i
+						point1=pt(fiducial1.x,fiducial1.y)
+						point2=pt(fiducial2.x, fiducial2.y)
+						base_line=LineString([point1,point2])
+						new_line=base_line.parallel_offset(4, 'left', 16, 2, 5.0)
+						point3=pt(list(new_line.coords)[1])
+						point4=pt(list(new_line.coords)[0])
+						polygon= Polygon([point1, point2, point3,point4])
+						frontier= pt(point[0],point[1])
+						if polygon.contains(frontier):
+							#frontier is stairs
+							# return where the frontier leads to
+							new_floor=i.id//10
+							return new_floor
+	return -1
+
 #_______________________________________________________________________________
 
 def discount(mapData,assigned_pt,centroids,infoGain,r):
@@ -149,7 +189,7 @@ def discount(mapData,assigned_pt,centroids,infoGain,r):
 				for j in range(0,len(centroids)):
 					current_pt=centroids[j]
 					if(mapData.data[i]==-1 and norm(point_of_index(mapData,i)-current_pt)<=r and norm(point_of_index(mapData,i)-assigned_pt)<=r):
-						infoGain[j]=infoGain[j] - 1*(mapData.info.resolution*2) #this should be modified, subtract the area of a cell, not 1
+						infoGain[j]=infoGain[j] - 1*(mapData.info.resolution**2) #this should be modified, subtract the area of a cell, not 1
 	return infoGain
 #________________________________________________________________________________
 

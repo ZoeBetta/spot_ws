@@ -43,6 +43,13 @@
   <param name="namespace" value="spot"/>
   <param name="delay_after_assignement" value="0.5"/>
   <param name="rate" value="100"/>
+  <param name="distance_weight" value="1"/>
+  <param name="floor_weight" value="1"/>
+  </node>
+  
+
+  <node pkg="rrt_exploration" type="floor.py" name="floormanagement" output="screen">
+   <param name="init_floor" value="2"/>
   </node>
   
 </launch>

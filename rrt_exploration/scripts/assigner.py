@@ -1,8 +1,10 @@
 #!/usr/bin/env python3
 
 #--------Include modules---------------
+from asyncio import start_unix_server
 from copy import copy
 import rospy
+from rrt_exploration.scripts.functions import IsStairs
 from visualization_msgs.msg import Marker
 from geometry_msgs.msg import Point
 from nav_msgs.msg import OccupancyGrid
@@ -13,11 +15,12 @@ from numpy import array
 from numpy import linalg as LA
 from numpy import all as All
 from numpy import inf
-from functions import robot,informationGain,discount
+from functions import robot,informationGain,discount, FloorGain
 from numpy.linalg import norm
+from rrt_exploration import Floor, FloorRequest
 
 # Subscribers' callbacks------------------------------
-mapData=OccupancyGrid()
+mapData=[OccupancyGrid(),OccupancyGrid(),OccupancyGrid(),OccupancyGrid(),OccupancyGrid(),OccupancyGrid(),OccupancyGrid(),OccupancyGrid(),OccupancyGrid(),OccupancyGrid()]
 frontiers=[]
 global1=OccupancyGrid()
 global2=OccupancyGrid()
@@ -31,15 +34,24 @@ def callBack(data):
 		frontiers.append(array([point.x,point.y]))
 
 def mapCallBack(data):
-    global mapData
-    mapData=data
+	global mapData,floor
+	req=FloorRequest()
+	req.req=0
+	fl=floor_service(req)
+	floor=fl.floor
+	mapData[floor]=data
     #rospy.loginfo("map received")
 # Node----------------------------------------------
 
+def StaircallBack(data):
+	global frontier_stairs
+	frontier_stairs=[]
+	for point in data.points:
+		frontier_stairs.append(array([point.x,point.y,point.z]))
+
 def node():
-	global frontiers,mapData,global1,global2,global3,globalmaps
+	global frontiers,mapData,global1,global2,global3,globalmaps, frontier_stairs,floor
 	rospy.init_node('assigner', anonymous=False)
-	
 	# fetching all parameters
 	map_topic= rospy.get_param('~map_topic','/grid_map')
 	info_radius= rospy.get_param('~info_radius',1.0)					#this can be smaller than the laser scanner range, >> smaller >>less computation time>> too small is not good, info gain won't be accurate
@@ -52,11 +64,14 @@ def node():
 	namespace_init_count = rospy.get_param('namespace_init_count',1)
 	delay_after_assignement=rospy.get_param('~delay_after_assignement',0.5)
 	rateHz = rospy.get_param('~rate',100)
-	
+	distance_weigth=rospy.get_param('distance_weight')
+	floor_weight=rospy.get_param('floor_weight')
 	rate = rospy.Rate(rateHz)
 #-------------------------------------------
 	rospy.Subscriber(map_topic, OccupancyGrid, mapCallBack)
 	rospy.Subscriber('/filtered_points', PointArray, callBack)
+	rospy.Subscriber('/stair_points', PointArray, StaircallBack)
+	floor_service=rospy.ServiceProxy('retrievefloor', Floor)
 	
 #---------------------------------------------------------------------------------------------------------------
 		
@@ -66,7 +81,11 @@ def node():
 		pass
 	centroids=copy(frontiers)	
 #wait if map is not received yet
-	while (len(mapData.data)<1):
+	req=FloorRequest()
+	req.req=0
+	fl=floor_service(req)
+	floor=fl.floor
+	while (len(mapData[floor].data)<1):
 		rospy.loginfo("map not received")
 		pass
 
@@ -87,12 +106,24 @@ def node():
 #-------------------------------------------------------------------------
 	while not rospy.is_shutdown():
 		rospy.loginfo("inside main")
-		centroids=copy(frontiers)		
+		req=FloorRequest()
+		req.req=0
+		fl=floor_service(req)
+		floor=fl.floor
+		centroids=copy(frontiers)	
+		stairs=copy(frontier_stairs)	
 #-------------------------------------------------------------------------			
 #Get information gain for each frontier point
 		infoGain=[]
+		stairsinfoGain=[]
+		for s in range(0,len(stairs)):
+			# crea la funzione che inizializza i gain exploration per le frontiere scale
+			# per ogni frontiera scale calcolo quale sarebbe il guadagno supposto del floor
+			stairsinfoGain.append(FloorGain(mapData[s.z]))
+			print(s)
+
 		for ip in range(0,len(centroids)):
-			infoGain.append(informationGain(mapData,[centroids[ip][0],centroids[ip][1]],info_radius))
+			infoGain.append(informationGain(mapData[floor],[centroids[ip][0],centroids[ip][1]],info_radius))
 #-------------------------------------------------------------------------			
 #get number of available/busy robots - uses a function of the movebase node
 		na=[] #available robots
@@ -106,29 +137,39 @@ def node():
 #------------------------------------------------------------------------- 
 #get dicount and update informationGain
 		for i in nb+na:
-			infoGain=discount(mapData,robots[i].assigned_point,centroids,infoGain,info_radius)
+			infoGain=discount(mapData[floor],robots[i].assigned_point,centroids,infoGain,info_radius)
 #-------------------------------------------------------------------------            
 		revenue_record=[]
 		centroid_record=[]
 		id_record=[]
-		
+		floor_gain=FloorGain(mapData[floor])
 		for ir in na:
 			for ip in range(0,len(centroids)):
+				# aggiungi il guadagno per il totale del piano
 				cost=norm(robots[ir].getPosition()-centroids[ip])		
 				threshold=1
 				information_gain=infoGain[ip]
 				if (norm(robots[ir].getPosition()-centroids[ip])<=hysteresis_radius):
-
 					information_gain*=hysteresis_gain
-				revenue=information_gain*info_multiplier-cost
+				# aggiungi weight per il cost per raggiungere e aggiungi il weight
+				revenue=information_gain*info_multiplier-cost*distance_weigth+floor_gain*floor_weight
 				revenue_record.append(revenue)
 				centroid_record.append(centroids[ip])
 				id_record.append(ir)
+			for si in range(0, len(stairs)):
+				cost=norm(robots[ir].getPosition()-array([stairs[si].x,stairs[si].y]))
+				information_gain=stairsinfoGain[si]
+				revenue=information_gain*floor_weight-cost*distance_weigth
+				revenue_record.append(revenue)
+				centroid_record.append(stairs[si])
+				id_record.append(ir)
+
 		
 		if len(na)<1:
 			revenue_record=[]
 			centroid_record=[]
 			id_record=[]
+			floor_gain=FloorGain(mapData[floor])
 			for ir in nb:
 				for ip in range(0,len(centroids)):
 					cost=norm(robots[ir].getPosition()-centroids[ip])		
@@ -138,11 +179,22 @@ def node():
 						information_gain*=hysteresis_gain
 				
 					if ((norm(centroids[ip]-robots[ir].assigned_point))<hysteresis_radius):
-						information_gain=informationGain(mapData,[centroids[ip][0],centroids[ip][1]],info_radius)*hysteresis_gain
+						information_gain=informationGain(mapData[floor],[centroids[ip][0],centroids[ip][1]],info_radius)*hysteresis_gain
 
-					revenue=information_gain*info_multiplier-cost
+					revenue=information_gain*info_multiplier-cost*distance_weigth+floor_gain*floor_weight
 					revenue_record.append(revenue)
 					centroid_record.append(centroids[ip])
+					id_record.append(ir)
+				for si in range(0, len(stairs)):
+					cost=norm(robots[ir].getPosition()-array([stairs[si].x,stairs[si].y]))
+					information_gain=stairsinfoGain[si]
+					if (norm(robots[ir].getPosition()-array([stairs[si].x,stairs[si].y]))<=hysteresis_radius):
+						information_gain*=hysteresis_gain
+					if ((norm(array([stairs[si].x,stairs[si].y])-robots[ir].assigned_point))<hysteresis_radius):
+						information_gain*=hysteresis_gain
+					revenue=information_gain*floor_weight-cost*distance_weigth
+					revenue_record.append(revenue)
+					centroid_record.append(stairs[si])
 					id_record.append(ir)
 		
 		rospy.loginfo("revenue record: "+str(revenue_record))	
