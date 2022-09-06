@@ -91,6 +91,7 @@ def main(argv):
    
     # Wait for the first responses.
     while not rospy.is_shutdown():
+        floor= rospy.get_param('floor')
         request_fiducials = [world_object_pb2.WORLD_OBJECT_APRILTAG]
         fiducial_objects = _world_object_client.list_world_objects(object_type=request_fiducials).world_objects
         try:
@@ -123,6 +124,7 @@ def main(argv):
             msg.x=start_tform_fiducial[0]
             msg.y=start_tform_fiducial[1]
             msg.z=start_tform_fiducial[2]
+            msg.floor=floor
             pub.publish(msg)
 
 

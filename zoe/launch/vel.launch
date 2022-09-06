@@ -8,5 +8,8 @@
       <node pkg="zoe" type="pointcloudconv" respawn="false" name="pointconv">
   </node>
 
+      <node pkg="zoe" type="fiducial_detection.py" respawn="false" name="fiducial">
+      <param name="floor" value="2" />
+  </node>
 
 </launch>
