@@ -171,9 +171,9 @@ include_directories(
 catkin_install_python(PROGRAMS
 #   scripts/my_python_script
    scripts/vel2.py
-scripts/clicked_point.py
-scripts/frames.py
-scripts/fiducial_detection.py
+   scripts/frames.py
+   scripts/fiducial_detection.py
+scripts/stairs.py
    DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
  )
 
