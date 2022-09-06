@@ -17,7 +17,7 @@ from shapely.geometry import Point as pt
 from shapely.geometry.polygon import Polygon
 from shapely.geometry import  LineString
 from zoe.msg import fiducial
-from rrt_exploration import Floor, FloorRequest
+from rrt_exploration.srv import Floor, FloorRequest
 
 # Subscribers' callbacks------------------------------
 mapData=[OccupancyGrid(),OccupancyGrid(),OccupancyGrid(),OccupancyGrid(),OccupancyGrid(),OccupancyGrid(),OccupancyGrid(),OccupancyGrid(),OccupancyGrid(),OccupancyGrid()]
@@ -61,19 +61,11 @@ def fiducialCallBack(data):
 		detected_fiducials.append(data)
 		# print(detected_fiducials)
 		# bubblesort algorithms to sort the fiducials in order
-		for i in range(len(detected_fiducials)):
-			already_sorted=True
-			for j in range(len(detected_fiducials)-i-j):
-				if detected_fiducials[j].id>detected_fiducials[j+1].id:
-					detected_fiducials[j], detected_fiducials[j+1] = detected_fiducials[j+1], detected_fiducials[j]
-					already_sorted= False
-			if already_sorted:
-				break
-		#print(detected_fiducials)
+		print(detected_fiducials)
 
 # Node----------------------------------------------
 def node():
-	global frontiers,mapData,global1,global2,global3,globalmaps,litraIndx,n_robots,namespace_init_count, detected_fiducials,floor
+	global frontiers,mapData,global1,global2,global3,globalmaps,litraIndx,n_robots,namespace_init_count, detected_fiducials,floor, floor_service
 	rospy.init_node('filter', anonymous=False)
 	# fetching all parameters
 	map_topic= rospy.get_param('~map_topic','/map')
@@ -87,6 +79,8 @@ def node():
 	litraIndx=len(namespace)
 	rate = rospy.Rate(rateHz)
 #-------------------------------------------
+	floor_service=rospy.ServiceProxy('retrievefloor', Floor)
+	rospy.wait_for_service('retrievefloor')
 	rospy.Subscriber(map_topic, OccupancyGrid, mapCallBack)
 	rospy.Subscriber('/fiducials', fiducial, fiducialCallBack)
 
@@ -125,7 +119,7 @@ def node():
 	filterpub = rospy.Publisher('filtered_points', PointArray, queue_size=10)
 	stairspub=rospy.Publisher('stair_points', PointArray, queue_size=10)
 	rospy.loginfo("the map and global costmaps are received")
-	floor_service=rospy.ServiceProxy('retrievefloor', Floor)
+	
 	
 	# wait if no frontier is received yet 
 	while len(frontiers)<1:
@@ -211,19 +205,9 @@ def node():
 			cond=False
 			temppoint.point.x=centroids[z][0]
 			temppoint.point.y=centroids[z][1]
-						
-			for i in range(0,1):
-				transformedPoint=tfLisn.transformPoint(globalmaps[i].header.frame_id,temppoint)
-				x=array([transformedPoint.point.x,transformedPoint.point.y])
-				cond=(gridValue(globalmaps[i],x)>threshold) or cond
-				#rospy.loginfo(cond)
-				rospy.loginfo((informationGain(mapData[floor],[centroids[z][0],centroids[z][1]],info_radius)))
-			if (cond or (informationGain(mapData[floor],[centroids[z][0],centroids[z][1]],info_radius))<0.4 or (obstacles(mapData,[centroids[z][0],centroids[z][1]],info_radius))>2.5):
-				centroids=delete(centroids, (z), axis=0)
-				z=z-1
-			#CONTROLLA SE SCALE
 			new_floor=IsStairs(detected_fiducials,[centroids[z][0],centroids[z][1]],floor )
-			if (IsStairs!=-1):
+			print(new_floor)
+			if (new_floor!=-1):
 				print("it is on the stairs")
 				tempPoint.x=centroids[z][0]
 				tempPoint.y=centroids[z][1]
@@ -231,6 +215,17 @@ def node():
 				arraystairs.points.append(copy(tempPoint))
 				centroids=delete(centroids, (z), axis=0)
 				z=z-1
+			else:						
+				for i in range(0,1):
+					transformedPoint=tfLisn.transformPoint(globalmaps[i].header.frame_id,temppoint)
+					x=array([transformedPoint.point.x,transformedPoint.point.y])
+					cond=(gridValue(globalmaps[i],x)>threshold) or cond
+					#rospy.loginfo(cond)
+					#rospy.loginfo((informationGain(mapData[floor],[centroids[z][0],centroids[z][1]],info_radius)))
+				if (cond or (informationGain(mapData[floor],[centroids[z][0],centroids[z][1]],info_radius))<0.4 or (obstacles(mapData[floor],[centroids[z][0],centroids[z][1]],info_radius))>2.5):
+					centroids=delete(centroids, (z), axis=0)
+					z=z-1
+				#CONTROLLA SE SCALE
 			z+=1
 		#rospy.loginfo(centroids)
 #-------------------------------------------------------------------------

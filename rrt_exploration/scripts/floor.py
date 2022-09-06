@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 import rospy
 import tf
 from numpy import array
@@ -28,10 +30,10 @@ def handle_floor(req):
 def node():
 	global floor
 	rospy.init_node('floormanagement')
-	floor=rospy.get_param('init_floor')
+	floor=rospy.get_param('~init_floor')
 	print(floor)
 	s=rospy.Service('retrievefloor', Floor, handle_floor)
-
+	rospy.spin()
 
 if __name__ == '__main__':
     try:

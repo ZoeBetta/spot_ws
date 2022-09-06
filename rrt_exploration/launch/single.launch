@@ -19,7 +19,7 @@
   </node>
  
   
-  <node pkg="rrt_exploration" type="filter.py" name="filter" output="screen">
+  <node pkg="rrt_exploration" type="filter_prova.py" name="filter" output="screen">
   <param name="map_topic" value="/grid_map"/>
   <param name="info_radius" value="1"/> 
   <param name="costmap_clearing_threshold" value="70"/> 
@@ -30,7 +30,7 @@
   <param name="rate" value="100"/>
   </node>
   
- <node pkg="rrt_exploration" type="assigner.py" name="assigner" output="screen">
+ <node pkg="rrt_exploration" type="assigner.py" name="assigner">
   <param name="map_topic" value="/grid_map"/>
   <param name="global_frame" value="map"/>
   <param name="info_radius" value="1"/> 
@@ -45,6 +45,7 @@
   <param name="rate" value="100"/>
   <param name="distance_weight" value="1"/>
   <param name="floor_weight" value="1"/>
+  <param name="maxexplored" value="80"/>
   </node>
   
 

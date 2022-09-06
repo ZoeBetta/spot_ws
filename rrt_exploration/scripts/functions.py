@@ -123,12 +123,12 @@ def informationGain(mapData,point,r):
 
 #________________________________________________________________________________	
 
-def FloorGain(mapData):
+def FloorGain(mapData, maxmeters):
 	explored=0
 	for i in range(0,len(mapData.data)):
-		if mapData[i]!=-1:
+		if mapData.data[i]!=-1:
 			explored+=1
-	return explored*(mapData.info.resolution**2)
+	return (maxmeters-explored*(mapData.info.resolution**2))
 
 #________________________________________________________________________________		
 
