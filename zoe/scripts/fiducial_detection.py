@@ -38,6 +38,7 @@ from std_msgs.msg import Header
 from zoe.msg import fiducial
 
 from tf import transformations
+from rrt_exploration import Floor, FloorRequest
 
 LOGGER = logging.getLogger(__name__)
 
@@ -91,13 +92,17 @@ def main(argv):
    
     # Wait for the first responses.
     while not rospy.is_shutdown():
-        floor= rospy.get_param('floor')
         request_fiducials = [world_object_pb2.WORLD_OBJECT_APRILTAG]
         fiducial_objects = _world_object_client.list_world_objects(object_type=request_fiducials).world_objects
         try:
             (trans,rot) = listener.lookupTransform('/start', BODY_FRAME_NAME, rospy.Time(0))
         except (tf.LookupException, tf.ConnectivityException, tf.ExtrapolationException):
             continue
+        floor_service=rospy.ServiceProxy('retrievefloor', Floor)
+        req=FloorRequest()
+        req.req=0
+        fl=floor_service(req)
+        floor=fl.floor
         #print(trans)
         #print(rot)
         for i in fiducial_objects:
