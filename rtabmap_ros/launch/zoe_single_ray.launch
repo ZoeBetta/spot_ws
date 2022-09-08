@@ -5,7 +5,8 @@
 <remap from="/rgb/camera_info" to="/spot/camera/frontleft/camera_info"/>
 <!--<remap from="/odom" to="/spot/odometry"/>-->
 
-<node pkg="rtabmap_ros" type="rtabmap" name="rtabmap_cloud" args="--delete_db_on_start"> 
+<node pkg="rtabmap_ros" type="rtabmap" name="rtabmap_cloud" > 
+<param name="database_path" value="~/Downloads/rtabmapprova.db"/>
   <param name="subscribe_depth" value="false"/>
 <param name="subscribe_scan" value="false"/>
 <param name="subscribe_scan_cloud" value="true"/>
@@ -38,6 +39,8 @@
 <param name="Grid/FootprintWidth" value="0.01"/>
 <param name="Grid/FootprintHeight" value="-0.01"/> -->
 </node>
+
+
 
 
 </launch>
