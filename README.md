@@ -1,7 +1,8 @@
 # spot_ws
 ## how to run
 In 5 different terminals  
-roslaunch vel spot.launch  
+roslaunch vel spot.launch
+rosrun zoe frames.py
 roslaunch vel vel.launch  
 roslaunch vel map.launch  
 roslaunch vel move_base.launch  
