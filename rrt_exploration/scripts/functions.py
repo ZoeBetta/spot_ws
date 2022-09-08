@@ -58,7 +58,7 @@ class robot:
 		robot.goal.target_pose.pose.position.y=point[1]
 		robot.goal.target_pose.pose.orientation.w = 1.0
 		self.client.send_goal(robot.goal)
-		self.assigned_point=array(point)
+		self.assigned_point=array([point[0],point[1]])
 	
 	def cancelGoal(self):
 		self.client.cancel_goal()
