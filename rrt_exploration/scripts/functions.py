@@ -21,7 +21,7 @@ class robot:
 	def __init__(self,name):
 		self.assigned_point=[]
 		self.name=name
-		self.global_frame=rospy.get_param('~global_frame','/grid_map')
+		self.global_frame=rospy.get_param('~global_frame','start')
 		self.listener=tf.TransformListener()
 		self.listener.waitForTransform(self.global_frame, '/base_link', rospy.Time(0),rospy.Duration(10.0))
 		cond=0;	
@@ -35,7 +35,7 @@ class robot:
 		self.assigned_point=self.position
 		self.client=actionlib.SimpleActionClient('/move_base', MoveBaseAction)
 		self.client.wait_for_server()
-		robot.goal.target_pose.header.frame_id=self.global_frame
+		robot.goal.target_pose.header.frame_id='map'
 		robot.goal.target_pose.header.stamp=rospy.Time.now()
 		rospy.wait_for_service('/move_base/make_plan')
 		self.make_plan = rospy.ServiceProxy('/move_base/make_plan', GetPlan)
@@ -119,7 +119,7 @@ def informationGain(mapData,point,r):
 	#rospy.loginfo(mapData.info.resolution)
 	#rospy.loginfo(infoGain)
 	# return the information gain in how many meters do you expect to discover
-	return infoGain*(mapData.info.resolution**2)
+	return infoGain*(mapData.info.resolution*2)
 
 #________________________________________________________________________________	
 
@@ -148,7 +148,7 @@ def obstacles(mapData,point,r):
 			#rospy.loginfo(norm(array(point)-point_of_index(mapData,i)))
 	#rospy.loginfo(mapData.info.resolution)
 	#rospy.loginfo(infoGain)
-	return infoGain*(mapData.info.resolution**2)
+	return infoGain*(mapData.info.resolution*2)
 #_______________________________________________________________________________
 
 def IsStairs(fiducial,point, floor):

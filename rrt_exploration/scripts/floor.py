@@ -21,7 +21,7 @@ def handle_floor(req):
 	msg=FloorResponse()
 	if (req.req==1):
 		floor=req.new_floor
-		msg.floor=1
+		msg.floor=rospy.wait_for_service('retrievefloor')
 	else:
 		msg.floor=floor
 	return msg

@@ -26,6 +26,7 @@ globalmaps=[]
 detected_fiducials=[]
 def callBack(data,args):
 	global frontiers,min_distance
+	rospy.loginfo("new frontiers")
 	transformedPoint=args[0].transformPoint(args[1],data)
 	x=[array([transformedPoint.point.x,transformedPoint.point.y])]
 	if len(frontiers)>0:
@@ -206,7 +207,7 @@ def node():
 			temppoint.point.x=centroids[z][0]
 			temppoint.point.y=centroids[z][1]
 			new_floor=IsStairs(detected_fiducials,[centroids[z][0],centroids[z][1]],floor )
-			print(new_floor)
+			#print(new_floor)
 			if (new_floor!=-1):
 				print("it is on the stairs")
 				tempPoint.x=centroids[z][0]
@@ -221,7 +222,7 @@ def node():
 					x=array([transformedPoint.point.x,transformedPoint.point.y])
 					cond=(gridValue(globalmaps[i],x)>threshold) or cond
 					#rospy.loginfo(cond)
-					#rospy.loginfo((informationGain(mapData[floor],[centroids[z][0],centroids[z][1]],info_radius)))
+					rospy.loginfo((informationGain(mapData[floor],[centroids[z][0],centroids[z][1]],info_radius)))
 				if (cond or (informationGain(mapData[floor],[centroids[z][0],centroids[z][1]],info_radius))<0.4 or (obstacles(mapData[floor],[centroids[z][0],centroids[z][1]],info_radius))>2.5):
 					centroids=delete(centroids, (z), axis=0)
 					z=z-1

@@ -121,7 +121,7 @@ char out=0;
 
  
  
- 
+ ROS_INFO("%d",out );
  return out;
  
 

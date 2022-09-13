@@ -158,6 +158,9 @@ def node():
 					information_gain*=hysteresis_gain
 				# aggiungi weight per il cost per raggiungere e aggiungi il weight
 				revenue=information_gain*info_multiplier-cost*distance_weigth+floor_gain*floor_weight
+				rospy.loginfo("info_gain"+str(information_gain))
+				rospy.loginfo("cost"+str(cost))
+				rospy.loginfo("floor gain"+str(floor_gain))
 				revenue_record.append(revenue)
 				centroid_record.append(centroids[ip])
 				id_record.append(ir)
@@ -165,6 +168,8 @@ def node():
 				cost=norm(robots[ir].getPosition()-array([stairs[si].x,stairs[si].y]))
 				information_gain=stairsinfoGain[si]
 				revenue=information_gain*floor_weight-cost*distance_weigth
+				rospy.loginfo("info gain STAIRS"+str(information_gain))
+				rospy.loginfo("cost STAIRS"+str(cost))
 				revenue_record.append(revenue)
 				centroid_record.append(stairs[si])
 				id_record.append(ir)
@@ -187,6 +192,9 @@ def node():
 						information_gain=informationGain(mapData[floor],[centroids[ip][0],centroids[ip][1]],info_radius)*hysteresis_gain
 
 					revenue=information_gain*info_multiplier-cost*distance_weigth+floor_gain*floor_weight
+					rospy.loginfo("info_gain"+str(information_gain))
+					rospy.loginfo("cost"+str(cost))
+					rospy.loginfo("floor gain"+str(floor_gain))
 					revenue_record.append(revenue)
 					centroid_record.append(centroids[ip])
 					id_record.append(ir)
@@ -198,13 +206,15 @@ def node():
 					if ((norm(array([stairs[si][0],stairs[si][1]])-robots[ir].assigned_point))<hysteresis_radius):
 						information_gain*=hysteresis_gain
 					revenue=information_gain*floor_weight-cost*distance_weigth
+					rospy.loginfo("info gain STAIRS"+str(information_gain))
+					rospy.loginfo("cost STAIRS"+str(cost))
 					revenue_record.append(revenue)
 					centroid_record.append(stairs[si])
 					id_record.append(ir)
 		
-		rospy.loginfo("revenue record: "+str(revenue_record))	
-		rospy.loginfo("centroid record: "+str(centroid_record))	
-		rospy.loginfo("robot IDs record: "+str(id_record))	
+		#rospy.loginfo("revenue record: "+str(revenue_record))	
+		#rospy.loginfo("centroid record: "+str(centroid_record))	
+		#rospy.loginfo("robot IDs record: "+str(id_record))	
 		
 #-------------------------------------------------------------------------	
 		if (len(id_record)>0):

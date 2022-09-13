@@ -215,6 +215,7 @@ x_new=Steer(x_nearest,x_rand,eta);
 
 // ObstacleFree    1:free     -1:unkown (frontier region)      0:obstacle
 char   checking=ObstacleFree(x_nearest,x_new,mapData);
+//std::cout<<checking<<std::endl;
 
 	  if (checking==-1){
           	exploration_goal.header.stamp=ros::Time(0);
@@ -228,6 +229,7 @@ char   checking=ObstacleFree(x_nearest,x_new,mapData);
           	points.points.push_back(p);
           	pub.publish(points) ;
           	targetspub.publish(exploration_goal);
+		ROS_INFO("something should be published");
 		  	points.points.clear();
         	
         	}
