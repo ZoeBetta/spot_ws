@@ -68,7 +68,7 @@ def node():
 	distance_weigth=rospy.get_param('~distance_weight')
 	floor_weight=rospy.get_param('~floor_weight')
 	maxexplored=rospy.get_param('~maxexplored')
-	rate = rospy.Rate(rateHz)
+	rate = rospy.Rate(10)
 #-------------------------------------------
 	floor_service=rospy.ServiceProxy('retrievefloor', Floor)
 	rospy.wait_for_service('retrievefloor')

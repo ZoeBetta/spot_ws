@@ -19,7 +19,7 @@
   </node>
  
   
-  <node pkg="rrt_exploration" type="filter_prova.py" name="filter" >
+  <node pkg="rrt_exploration" type="filter_prova.py" name="filter"  >
   <param name="map_topic" value="/grid_map"/>
   <param name="info_radius" value="1"/> 
   <param name="costmap_clearing_threshold" value="70"/> 

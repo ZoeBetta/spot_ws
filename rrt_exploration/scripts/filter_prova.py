@@ -222,8 +222,8 @@ def node():
 					x=array([transformedPoint.point.x,transformedPoint.point.y])
 					cond=(gridValue(globalmaps[i],x)>threshold) or cond
 					#rospy.loginfo(cond)
-					rospy.loginfo((informationGain(mapData[floor],[centroids[z][0],centroids[z][1]],info_radius)))
-				if (cond or (informationGain(mapData[floor],[centroids[z][0],centroids[z][1]],info_radius))<0.4 or (obstacles(mapData[floor],[centroids[z][0],centroids[z][1]],info_radius))>2.5):
+					rospy.loginfo((obstacles(mapData[floor],[centroids[z][0],centroids[z][1]],info_radius)))
+				if (cond or (informationGain(mapData[floor],[centroids[z][0],centroids[z][1]],info_radius))<0.01 or (obstacles(mapData[floor],[centroids[z][0],centroids[z][1]],info_radius))>0.25):
 					centroids=delete(centroids, (z), axis=0)
 					z=z-1
 				#CONTROLLA SE SCALE

@@ -119,7 +119,7 @@ def informationGain(mapData,point,r):
 	#rospy.loginfo(mapData.info.resolution)
 	#rospy.loginfo(infoGain)
 	# return the information gain in how many meters do you expect to discover
-	return infoGain*(mapData.info.resolution*2)
+	return infoGain*(mapData.info.resolution**2)
 
 #________________________________________________________________________________	
 
@@ -148,7 +148,7 @@ def obstacles(mapData,point,r):
 			#rospy.loginfo(norm(array(point)-point_of_index(mapData,i)))
 	#rospy.loginfo(mapData.info.resolution)
 	#rospy.loginfo(infoGain)
-	return infoGain*(mapData.info.resolution*2)
+	return infoGain*(mapData.info.resolution**2)
 #_______________________________________________________________________________
 
 def IsStairs(fiducial,point, floor):
