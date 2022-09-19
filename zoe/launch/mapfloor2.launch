@@ -1,0 +1,63 @@
+<?xml version="1.0"?>
+<!-- -->
+<launch>
+  <remap from="/scan_cloud" to="/tf_points2"/>
+<remap from="/rgb/image" to="/spot/camera/frontleft/image"/>
+<remap from="/rgb/camera_info" to="/spot/camera/frontleft/camera_info"/>
+<!--<remap from="/odom" to="/spot/odometry"/>-->
+
+<group ns="floor2">
+  <remap from="/floor2/scan_cloud" to="/floor2/tf_points2"/>
+<remap from="/floor2/rgb/image" to="/spot/camera/frontleft/image"/>
+<remap from="/floor2/rgb/camera_info" to="/spot/camera/frontleft/camera_info"/>
+
+      <node pkg="zoe" type="frames.py" respawn="false" name="frame" output="screen">
+	<param name="floor" value="2" />
+  </node>
+
+      <node pkg="zoe" type="pointcloudconv" respawn="false" name="pointconv" output="screen">
+<param name="floor" value="2" />
+  </node>
+
+<node pkg="rtabmap_ros" type="rtabmap" name="rtabmap_cloud" args="--delete_db_on_start">
+  <param name="subscribe_depth" value="false"/>
+<param name="subscribe_scan" value="false"/>
+<param name="subscribe_scan_cloud" value="true"/>
+<param name="subscribe_stereo" value="false"/>
+<param name="subscribe_rgbd" value="false"/>
+<param name="subscribe_depth" value="false"/>
+<param name="frame_id" type="string" value="velodyne_base_link"/>
+<param name="odom_frame_id" type="string" value="start2"/>
+<param name="Grid/FlatObstacleDetected" value="false"/>
+<param name="Grid/NormalsSegmentation" value="true"/>
+<param name="Grid/MaxGroundHeight" value="-0.5"/>
+<param name="Grid/MinGroundHeight" value="-2.0"/>
+<param name="Grid/RangeMax" value="0.0"/>
+<param name="Grid/MaxGroundAngle" value="15"/>
+<param name="GridGlobal/Eroded" value="false"/>
+<param name="Optimizer/Strategy" value="2"/>
+<param name="Optimizer/PriorsIgnored" value="false"/>
+<param name="Optimizer/Robust" value="false"/>
+<param name="GTSAM/Optimizer" value="2"/>
+<param name="Bayes/FullPredictionUpdate" value="false"/>
+<param name="Grid/MaxObstacleHeight" value="0.5"/>
+<param name="Grid/RayTracing" value="true"/> 
+<param name="GridGlobal/FullUpdate" value="false"/> 
+<param name="Grid/Sensor" value="0"/>
+<param name="GridGlobal/UpdateError" value="0.1"/>
+<param name="GridGlobal/ProbHit" value="0.9"/>
+<param name="GridGlobal/ProbMiss" value="0.45"/>
+<!--<param name="Grid/FootprintLenght" value="0.01"/>
+<param name="Grid/FootprintWidth" value="0.01"/>
+<param name="Grid/FootprintHeight" value="-0.01"/> -->
+</node>
+
+
+
+
+</group>
+
+
+
+
+</launch>

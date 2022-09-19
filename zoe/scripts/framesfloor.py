@@ -63,12 +63,13 @@ def main(argv):
     update_thread = threading.Thread(target=_update_thread, args=[_async_tasks])
     update_thread.daemon = True
     update_thread.start()
+    floor=rospy.get_param("~floor")
     r= rospy.Rate(20)
     frame_tree_edges={}
     while any(task.proto is None for task in _task_list):
         time.sleep(0.1)
         print('wait')
-    name_frame="start"
+    name_frame="start"+str(floor)
     print(name_frame)
     odom_tform_start_prova=get_odom_tform_body(_robot_state_task.proto.kinematic_state.transforms_snapshot).to_proto()
     odom_tform_start=SE3Pose(odom_tform_start_prova.position.x,odom_tform_start_prova.position.y,odom_tform_start_prova.position.z,odom_tform_start_prova.rotation)

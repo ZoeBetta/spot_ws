@@ -6,7 +6,7 @@ raytrace_range: 4.5
 # dimensions of the robot
 footprint: [[0.55,-0.25], [0.55, 0.25], [-0.55,0.25], [-0.55,-0.25]]
 # I am far from obstacles if I stay 0.7 metersa away, any closer and I have a cost
-inflation_radius: 0.7
+inflation_radius: 0.3
 
 # list of sensors
 observation_sources: point_cloud_sensor

@@ -4,5 +4,4 @@
 <include file="$(find simpcl)/launch/mapping.launch"></include>
 <include file="$(find rtabmap_ros)/launch/zoe_single_ray.launch"></include>
 
-
 </launch>
