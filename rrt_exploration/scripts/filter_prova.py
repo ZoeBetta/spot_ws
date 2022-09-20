@@ -211,7 +211,7 @@ def node():
 		frontiers=copy(centroids)
 #-------------------------------------------------------------------------	
 #clearing old frontiers  
-      		for i in range(0,len(to_delete)):
+		for i in range(0,len(to_delete)):
 			if to_delete_counter >20:
 				to_delete.pop(i)
 				to_delete_counter.pop(i)
@@ -248,7 +248,7 @@ def node():
 						arraystairs.points.append(copy(tempPoint))
 						centroids=delete(centroids, (z), axis=0)
 						z=z-1
-					else:						
+					else:
 						for i in range(0,1):
 							transformedPoint=tfLisn.transformPoint(globalmaps[i].header.frame_id,temppoint)
 							x=array([transformedPoint.point.x,transformedPoint.point.y])
