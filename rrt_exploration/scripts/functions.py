@@ -66,6 +66,8 @@ class robot:
 	
 	def getState(self):
 		return self.client.get_state()
+	def getGoal(self):
+		return self.assigned_point
 		
 	def makePlan(self,start,end):
 		robot.start.pose.position.x=start[0]

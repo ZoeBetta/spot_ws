@@ -6,7 +6,7 @@ from copy import copy
 import rospy
 from visualization_msgs.msg import Marker
 from geometry_msgs.msg import Point
-from nav_msgs.msg import OccupancyGrid
+from nav_msgs.msg import OccupancyGrid, Path
 from geometry_msgs.msg import PointStamped 
 import tf
 from numpy import array,vstack,delete
@@ -24,6 +24,9 @@ mapData=[OccupancyGrid(),OccupancyGrid(),OccupancyGrid(),OccupancyGrid(),Occupan
 frontiers=[]
 globalmaps=[]
 detected_fiducials=[]
+to_delete=[]
+to_delete_counter=[]
+
 def callBack(data,args):
 	global frontiers,min_distance
 	rospy.loginfo("new frontiers")
@@ -63,7 +66,12 @@ def fiducialCallBack(data):
 		# print(detected_fiducials)
 		# bubblesort algorithms to sort the fiducials in order
 		print(detected_fiducials)
-
+def pathCallBack(data):
+	global path
+	path=data.poses
+def goalCallBack(data):
+	global current_goal
+	current_goal=data
 # Node----------------------------------------------
 def node():
 	global frontiers,mapData,global1,global2,global3,globalmaps,litraIndx,n_robots,namespace_init_count, detected_fiducials,floor, floor_service
@@ -84,6 +92,8 @@ def node():
 	rospy.wait_for_service('retrievefloor')
 	rospy.Subscriber(map_topic, OccupancyGrid, mapCallBack)
 	rospy.Subscriber('/fiducials', fiducial, fiducialCallBack)
+	rospy.Subscriber('/move_base/GlobalPlanner/plan', Path, pathCallBack)
+	rospy.Subscriber('/currentgoal', Point, goalCallBack)
 
 #---------------------------------------------------------------------------------------------------------------
 	for i in range(0,n_robots):
@@ -121,7 +131,8 @@ def node():
 	stairspub=rospy.Publisher('stair_points', PointArray, queue_size=10)
 	rospy.loginfo("the map and global costmaps are received")
 	
-	
+	robots=[]
+	robots.append(robot(namespace))
 	# wait if no frontier is received yet 
 	while len(frontiers)<1:
 		pass
@@ -200,32 +211,53 @@ def node():
 		frontiers=copy(centroids)
 #-------------------------------------------------------------------------	
 #clearing old frontiers  
-      
+      		for i in range(0,len(to_delete)):
+			if to_delete_counter >20:
+				to_delete.pop(i)
+				to_delete_counter.pop(i)
+			else :
+				to_delete_counter[i]= to_delete_counter[i]+1
 		z=0
+		print(to_delete)
 		while z<len(centroids):
 			cond=False
 			temppoint.point.x=centroids[z][0]
 			temppoint.point.y=centroids[z][1]
-			new_floor=IsStairs(detected_fiducials,[centroids[z][0],centroids[z][1]],floor )
-			#print(new_floor)
-			if (new_floor!=-1):
-				print("it is on the stairs")
-				tempPoint.x=centroids[z][0]
-				tempPoint.y=centroids[z][1]
-				tempPoint.z=new_floor
-				arraystairs.points.append(copy(tempPoint))
-				centroids=delete(centroids, (z), axis=0)
-				z=z-1
-			else:						
-				for i in range(0,1):
-					transformedPoint=tfLisn.transformPoint(globalmaps[i].header.frame_id,temppoint)
-					x=array([transformedPoint.point.x,transformedPoint.point.y])
-					cond=(gridValue(globalmaps[i],x)>threshold) or cond
-					#rospy.loginfo(cond)
-					rospy.loginfo((obstacles(mapData[floor],[centroids[z][0],centroids[z][1]],info_radius)))
-				if (cond or (informationGain(mapData[floor],[centroids[z][0],centroids[z][1]],info_radius))<0.01 or (obstacles(mapData[floor],[centroids[z][0],centroids[z][1]],info_radius))>0.25):
+			found=0
+			for i in range(0,len(to_delete)):
+				if centroids[z] == to_delete[i]:
 					centroids=delete(centroids, (z), axis=0)
 					z=z-1
+					found=1
+			if found==0:
+				if (centroids[z]==current_goal):
+					if path==[]:
+						to_delete.append(centroids[z])
+						to_delete_counter.append(1)
+						centroids=delete(centroids, (z), axis=0)
+						z=z-1
+						print("path not good, cancelling centroids")
+				else:
+					new_floor=IsStairs(detected_fiducials,[centroids[z][0],centroids[z][1]],floor )
+					#print(new_floor)
+					if (new_floor!=-1):
+						print("it is on the stairs")
+						tempPoint.x=centroids[z][0]
+						tempPoint.y=centroids[z][1]
+						tempPoint.z=new_floor
+						arraystairs.points.append(copy(tempPoint))
+						centroids=delete(centroids, (z), axis=0)
+						z=z-1
+					else:						
+						for i in range(0,1):
+							transformedPoint=tfLisn.transformPoint(globalmaps[i].header.frame_id,temppoint)
+							x=array([transformedPoint.point.x,transformedPoint.point.y])
+							cond=(gridValue(globalmaps[i],x)>threshold) or cond
+							#rospy.loginfo(cond)
+							rospy.loginfo((obstacles(mapData[floor],[centroids[z][0],centroids[z][1]],info_radius)))
+						if (cond or (informationGain(mapData[floor],[centroids[z][0],centroids[z][1]],info_radius))<0.01 or (obstacles(mapData[floor],[centroids[z][0],centroids[z][1]],info_radius))>0.25):
+							centroids=delete(centroids, (z), axis=0)
+							z=z-1
 				#CONTROLLA SE SCALE
 			z+=1
 		#rospy.loginfo(centroids)
