@@ -5,10 +5,10 @@
 <remap from="/rgb/camera_info" to="/spot/camera/frontleft/camera_info"/>
 <!--<remap from="/odom" to="/spot/odometry"/>-->
 
-<group ns="floor1">
-  <remap from="/floor1/scan_cloud" to="/tf_points2"/>
-<remap from="/floor1/rgb/image" to="/spot/camera/frontleft/image"/>
-<remap from="/floor1/rgb/camera_info" to="/spot/camera/frontleft/camera_info"/>
+<group ns="floor2">
+  <remap from="/floor2/scan_cloud" to="/tf_points2"/>
+<remap from="/floor2/rgb/image" to="/spot/camera/frontleft/image"/>
+<remap from="/floor2/rgb/camera_info" to="/spot/camera/frontleft/camera_info"/>
 <node pkg="rtabmap_ros" type="rtabmap" name="rtabmap_cloud" args="--delete_db_on_start">
   <param name="subscribe_depth" value="false"/>
 <param name="subscribe_scan" value="false"/>
@@ -42,8 +42,5 @@
 <param name="Grid/FootprintHeight" value="-0.01"/> -->
 </node>
 </group>
-
-
-
 
 </launch>
