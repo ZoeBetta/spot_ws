@@ -35,7 +35,7 @@ from sensor_msgs import point_cloud2
 from sensor_msgs.msg import PointCloud2
 from sensor_msgs.msg import PointField
 from std_msgs.msg import Header
-from zoe.msg import fiducial
+from autonomous_spot_interface.msg import fiducial
 
 from tf import transformations
 from rrt_exploration.srv import Floor, FloorRequest

@@ -14,7 +14,7 @@ int actual_floor;
 void pointcloudcallback(const sensor_msgs::PointCloud2::ConstPtr& msg)
 {
        sensor_msgs::PointCloud2 pcl_out;
-	char s1[10]= "start";
+	char s1[20]= "velodyne_base_link";
  	//char s2[10]="number";
 	//std::stringstream ss;
 	//ss<<actual_floor;
